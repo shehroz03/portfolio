@@ -30,8 +30,8 @@ export default async function handler(
     }
 
     if (userStats.count >= 5) {
-      return response.status(429).json({ 
-        error: 'Too many requests. Please try again after an hour.' 
+      return response.status(429).json({
+        error: 'Too many requests. Please try again after an hour.'
       });
     }
 
@@ -58,7 +58,7 @@ export default async function handler(
       from: 'Portfolio Contact <onboarding@resend.dev>',
       to: 'shehrozshafiq03@gmail.com',
       subject: `New Portfolio Message from ${name}`,
-      reply_to: email,
+      replyTo: email,
       html: `
         <div style="font-family: sans-serif; padding: 20px; color: #333;">
           <h2 style="color: #6366F1;">New Contact Form Submission</h2>
@@ -80,10 +80,10 @@ export default async function handler(
       return response.status(500).json({ error: 'Failed to send email. Please try again later.' });
     }
 
-    return response.status(200).json({ 
-      success: true, 
+    return response.status(200).json({
+      success: true,
       message: 'Message sent successfully!',
-      id: data?.id 
+      id: data?.id
     });
 
   } catch (error) {

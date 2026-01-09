@@ -1,7 +1,6 @@
 import { ArrowRight, Github, Linkedin, Twitter } from 'lucide-react';
 import { Button } from './ui/button';
 import { AnimatedIcon } from './ui/animated-icon';
-import fiverrIcon from 'figma:asset/4df4046b9bf7a8d2d346989ba7c8b843154a0e13.png';
 
 export function Hero() {
   return (
@@ -10,11 +9,11 @@ export function Hero() {
       <div className="absolute inset-0 bg-gradient-to-br from-[#6366F1]/20 via-background to-background" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(99,102,241,0.15),transparent_50%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_60%,rgba(168,85,247,0.1),transparent_50%)]" />
-      
+
       {/* Animated glow orbs */}
       <div className="absolute top-20 right-20 w-96 h-96 bg-[#6366F1]/10 rounded-full blur-3xl animate-pulse" />
       <div className="absolute bottom-20 left-20 w-96 h-96 bg-[#A855F7]/10 rounded-full blur-3xl animate-pulse delay-1000" />
-      
+
       <div className="container mx-auto relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Column - Content */}
