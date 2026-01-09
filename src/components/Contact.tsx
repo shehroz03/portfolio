@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Mail, MapPin, Send, CheckCircle2, ExternalLink, Linkedin } from 'lucide-react';
+import { Mail, MapPin, Send, CheckCircle2, ExternalLink, Linkedin, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
@@ -14,16 +15,40 @@ export function Contact() {
     message: '',
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { ref, isVisible } = useScrollAnimation();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate form submission
-    setIsSubmitted(true);
-    setTimeout(() => {
-      setIsSubmitted(false);
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Something went wrong');
+      }
+
+      setIsSubmitted(true);
+      toast.success('Message sent successfully!');
       setFormData({ name: '', email: '', message: '' });
-    }, 3000);
+
+      setTimeout(() => {
+        setIsSubmitted(false);
+      }, 5000);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to send message');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -37,11 +62,10 @@ export function Contact() {
     <section id="contact" className="py-24 px-6 bg-secondary/20 relative overflow-hidden">
       {/* Background glow */}
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#6366F1]/5 rounded-full blur-3xl" />
-      
+
       <div className="container mx-auto relative" ref={ref}>
-        <div className={`max-w-3xl mx-auto text-center mb-16 space-y-4 transition-all duration-700 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-        }`}>
+        <div className={`max-w-3xl mx-auto text-center mb-16 space-y-4 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}>
           <h2 className="text-4xl md:text-5xl tracking-tight">Let's build your next product</h2>
           <p className="text-lg text-muted-foreground">
             Whether you need a full product from scratch or want to upgrade an existing app, share a few lines about your idea and I'll reply with a clear technical plan, timeline, and budget.
@@ -50,9 +74,8 @@ export function Contact() {
 
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
           {/* Contact Info */}
-          <div className={`space-y-6 transition-all duration-700 delay-200 ${
-            isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'
-          }`}>
+          <div className={`space-y-6 transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'
+            }`}>
             <div className="space-y-4">
               <h3 className="text-2xl">Get in Touch</h3>
               <p className="text-muted-foreground leading-relaxed">
@@ -68,7 +91,7 @@ export function Contact() {
                 </div>
                 <div className="space-y-1 relative z-10">
                   <div className="text-sm text-muted-foreground">Email</div>
-                  <a 
+                  <a
                     href="mailto:shehrozshafiq03@gmail.com"
                     className="text-sm hover:text-primary transition-colors"
                   >
@@ -127,12 +150,11 @@ export function Contact() {
           </div>
 
           {/* Contact Form */}
-          <Card className={`p-8 bg-card border-border transition-all duration-700 delay-400 relative overflow-hidden group ${
-            isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'
-          }`}>
+          <Card className={`p-8 bg-card border-border transition-all duration-700 delay-400 relative overflow-hidden group ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'
+            }`}>
             {/* Card glow */}
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-            
+
             {!isSubmitted ? (
               <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
                 <div className="space-y-2">
@@ -182,9 +204,23 @@ export function Contact() {
                   />
                 </div>
 
-                <Button type="submit" size="lg" className="w-full group shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow">
-                  Send Message
-                  <Send className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                <Button
+                  type="submit"
+                  size="lg"
+                  disabled={isSubmitting}
+                  className="w-full group shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
+                >
+                  {isSubmitting ? (
+                    <>
+                      Sending...
+                      <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                    </>
+                  ) : (
+                    <>
+                      Send Message
+                      <Send className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    </>
+                  )}
                 </Button>
               </form>
             ) : (

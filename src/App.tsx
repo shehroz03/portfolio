@@ -8,6 +8,8 @@ import { Contact } from './components/Contact';
 import { Navigation } from './components/Navigation';
 import { Footer } from './components/Footer';
 
+import { Toaster } from './components/ui/sonner';
+
 export default function App() {
   useEffect(() => {
     // Set dark mode by default
@@ -24,6 +26,7 @@ export default function App() {
       <Testimonials />
       <Contact />
       <Footer />
+      <Toaster />
     </div>
   );
 }
