@@ -10,7 +10,7 @@ export default defineConfig({
       name: 'contact-api-mock',
       configureServer(server) {
         server.middlewares.use((req, res, next) => {
-          if (req.url === '/api/contact' && req.method === 'POST') {
+          if (req.url === '/api/send-contact' && req.method === 'POST') {
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify({ success: true, message: 'Message received (Local Dev Mode)' }));
             return;
