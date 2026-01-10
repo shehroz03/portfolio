@@ -1,11 +1,13 @@
 const { Resend } = require('resend');
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 module.exports = async (req, res) => {
     // Support GET for status check
     if (req.method === 'GET') {
-        return res.status(200).json({ status: 'ok', message: 'API is alive (JS)' });
+        return res.status(200).json({
+            status: 'ok',
+            message: 'API is alive (JS)',
+            environment: process.env.RESEND_API_KEY ? 'Configured' : 'Missing API Key'
+        });
     }
 
     // Only allow POST
@@ -19,6 +21,12 @@ module.exports = async (req, res) => {
         if (!name || !email || !message) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
+
+        if (!process.env.RESEND_API_KEY) {
+            return res.status(500).json({ error: 'RESEND_API_KEY is not set in Vercel Dashboard' });
+        }
+
+        const resend = new Resend(process.env.RESEND_API_KEY);
 
         const { data, error } = await resend.emails.send({
             from: 'Portfolio <onboarding@resend.dev>',
@@ -40,7 +48,7 @@ module.exports = async (req, res) => {
 
         if (error) {
             console.error('Resend Error:', error);
-            return res.status(500).json({ error: 'Failed to send email' });
+            return res.status(500).json({ error: 'Resend API error', details: error });
         }
 
         return res.status(200).json({ success: true, id: data.id });
